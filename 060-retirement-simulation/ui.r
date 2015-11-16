@@ -4,16 +4,20 @@ renderInputs <- function(prefix) {
   wellPanel(
     fluidRow(
       column(6,
-        sliderInput(paste0(prefix, "_", "n_obs"), "Number of observations (in Years):", min = 0, max = 40, value = 20),
-        sliderInput(paste0(prefix, "_", "start_capital"), "Initial capital invested :", min = 100000, max = 10000000, value = 2000000, step = 100000, pre = "$", sep = ","),
-        sliderInput(paste0(prefix, "_", "annual_mean_return"), "Annual investment return (in %):", min = 0.0, max = 30.0, value = 5.0, step = 0.5),
-        sliderInput(paste0(prefix, "_", "annual_ret_std_dev"), "Annual investment volatility (in %):", min = 0.0, max = 25.0, value = 7.0, step = 0.1)
+        sliderInput(paste0(prefix, "_", "n_obs_br"), "Number of years before retirement:", min = 0, max = 40, value = 20),
+        sliderInput(paste0(prefix, "_", "n_obs"), "Number of years after retirement:", min = 0, max = 50, value = 30),       
+        sliderInput(paste0(prefix, "_", "start_capital"), "Initial capital invested :", min = 0, max = 10000000, value = 500000, step = 10000, pre = "$", sep = ","),
+        sliderInput(paste0(prefix, "_", "monthly_additions_br"), "Monthly capital invested :", min = 00, max = 5000, value = 400, step = 100, pre = "$", sep = ","),
+        sliderInput(paste0(prefix, "_", "monthly_withdrawals"), "Monthly capital withdrawals in Retirement:", min = 1000, max = 20000, value = 7000, step = 500, pre = "$", sep = ",")
       ),
       column(6,
-        sliderInput(paste0(prefix, "_", "annual_inflation"), "Annual inflation (in %):", min = 0, max = 20, value = 2.5, step = 0.1),
-        sliderInput(paste0(prefix, "_", "annual_inf_std_dev"), "Annual inflation volatility. (in %):", min = 0.0, max = 5.0, value = 1.5, step = 0.05),
-        sliderInput(paste0(prefix, "_", "monthly_withdrawals"), "Monthly capital withdrawals:", min = 1000, max = 100000, value = 10000, step = 1000, pre = "$", sep = ","),
-        sliderInput(paste0(prefix, "_", "n_sim"), "Number of simulations:", min = 0, max = 2000, value = 200)
+             sliderInput(paste0(prefix, "_", "annual_mean_return_br"), "Annual investment return before retirement (in %):", min = 0.0, max = 20.0, value = 7.5, step = 0.5),
+             sliderInput(paste0(prefix, "_", "annual_mean_return"), "Annual investment return after retirement(in %):", min = 0.0, max = 15.0, value = 6.5, step = 0.5),
+             sliderInput(paste0(prefix, "_", "annual_ret_std_dev"), "Annual investment volatility (in %):", min = 0.0, max = 15.0, value = 2.0, step = 0.1),
+        sliderInput(paste0(prefix, "_", "annual_inflation"), "Annual inflation (in %):", min = 0, max = 10, value = 2.5, step = 0.1),
+        sliderInput(paste0(prefix, "_", "annual_inf_std_dev"), "Annual inflation volatility. (in %):", min = 0.0, max = 5.0, value = 0.0, step = 0.05),
+
+        sliderInput(paste0(prefix, "_", "n_sim"), "Number of simulations:", min = 0, max = 200, value = 10)
       )
     ),
     p(actionButton(paste0(prefix, "_", "recalc"),
@@ -30,12 +34,12 @@ shinyUI(fluidPage(theme="simplex.min.css",
   ),
 
   # Application title
-  tags$h2("Retirement: simulating wealth with random returns, inflation and withdrawals"),
-  p("An adaptation of the",
-    tags$a(href="http://glimmer.rstudio.com/systematicin/retirement.withdrawal/", "retirement app"),
-    "from",
-    tags$a(href="http://systematicinvestor.wordpress.com/", "Systematic Investor"),
-    "to demonstrate the use of Shiny's new grid options."),
+  tags$h4("Retirement: simulating wealth with random returns, inflation and withdrawals"),
+#   p("An adaptation of the",
+#     tags$a(href="http://glimmer.rstudio.com/systematicin/retirement.withdrawal/", "retirement app"),
+#     "from",
+#     tags$a(href="http://systematicinvestor.wordpress.com/", "Systematic Investor"),
+#     "to demonstrate the use of Shiny's new grid options."),
   hr(),
 
   fluidRow(
@@ -48,10 +52,25 @@ shinyUI(fluidPage(theme="simplex.min.css",
   ),
   fluidRow(
     column(6,
-      plotOutput("a_distPlot", height = "600px")
+           tabsetPanel(
+               tabPanel("Plots", plotOutput("a_distPlot", height = "500px")),
+               tabPanel("Returns_before_retirement",  DT::dataTableOutput("a_retirement_table_br") ),
+               tabPanel("Returns_after_retirement",  DT::dataTableOutput("a_retirement_table_ar") ) )
     ),
     column(6,
-      plotOutput("b_distPlot", height = "600px")
+#      plotOutput("b_distPlot", height = "500px")
+          tabsetPanel(
+                tabPanel("Plots", plotOutput("b_distPlot", height = "500px")),
+                tabPanel("Returns_before_retirement",  DT::dataTableOutput("b_retirement_table_br") ),
+                tabPanel("Returns_after_retirement",  DT::dataTableOutput("b_retirement_table_ar") ) )
+
     )
   )
 ))
+
+
+
+
+
+
+
